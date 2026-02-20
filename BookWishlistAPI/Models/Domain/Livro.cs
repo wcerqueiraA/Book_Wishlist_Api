@@ -1,4 +1,4 @@
-﻿namespace BookWishlistAPI.Domain
+﻿namespace BookWishlistAPI.Models.Domain
 {
     public class Livro
     {
