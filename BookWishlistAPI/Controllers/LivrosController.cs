@@ -1,6 +1,7 @@
 ﻿using BookWishlistAPI.Data;
 using BookWishlistAPI.Models.Domain;
 using BookWishlistAPI.Models.DTO;
+using BookWishlistAPI.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,12 @@ namespace BookWishlistAPI.Controllers
     {
         private readonly BookWishlistDbContext _dbContext;
 
-        public LivrosController(BookWishlistDbContext dbContext)
+        private readonly ILivroRepository _livroRepository;
+
+        public LivrosController(BookWishlistDbContext dbContext, ILivroRepository livroRepository)
         {
             _dbContext = dbContext;
+            _livroRepository = livroRepository;
         }
 
         // Listar todos os Livros
@@ -23,7 +27,7 @@ namespace BookWishlistAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> ListarLivrosAsync()
         {
-            var livrosDomain = await _dbContext.Livros.ToListAsync();
+            var livrosDomain = await _livroRepository.ListarLivrosAsync();
 
             var livrosDto = new List<LivroDTO>();
             foreach (var livroDomain in livrosDomain)
@@ -51,7 +55,7 @@ namespace BookWishlistAPI.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> BuscarLivroPorIdAsync([FromRoute] int id)
         {
-            var livroDomain = await _dbContext.Livros.FirstOrDefaultAsync(livro => livro.Id == id);
+            var livroDomain = await _livroRepository.BuscarLivroPorIdAsync(id);
 
             if (livroDomain == null)
             {
@@ -91,8 +95,7 @@ namespace BookWishlistAPI.Controllers
                 DataAdicao = requisicaoCriacaoLivroDto.DataAdicao
             };
 
-            await _dbContext.Livros.AddAsync(livroDomain);
-            await _dbContext.SaveChangesAsync();
+            livroDomain = await _livroRepository.CriarLivroAsync(livroDomain);
 
             var livroDto = new LivroDTO
             {
@@ -116,21 +119,25 @@ namespace BookWishlistAPI.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> AtualizarLivroAsync([FromRoute] int id, [FromBody] RequisicaoAtualizacaoLivroDTO requisicaoAtualizacaoLivroDTO)
         {
-            var livroDomain = await _dbContext.Livros.FirstOrDefaultAsync(livro => livro.Id == id);
+
+            var livroDomain = new Livro
+            {
+                Titulo = requisicaoAtualizacaoLivroDTO.Titulo,
+                Autor = requisicaoAtualizacaoLivroDTO.Autor,
+                AnoPublicacao = requisicaoAtualizacaoLivroDTO.AnoPublicacao,
+                Editora = requisicaoAtualizacaoLivroDTO.Editora,
+                Genero = requisicaoAtualizacaoLivroDTO.Genero,
+                Preco = requisicaoAtualizacaoLivroDTO.Preco,
+                Prioridade = requisicaoAtualizacaoLivroDTO.Prioridade,
+                DataAdicao = requisicaoAtualizacaoLivroDTO.DataAdicao
+            };
+
+            livroDomain =  await _livroRepository.AtualizarLivroAsync(id, livroDomain);
 
             if(livroDomain == null)
             {
                 return NotFound();
             }
-
-            livroDomain.Titulo = requisicaoAtualizacaoLivroDTO.Titulo;
-            livroDomain.Autor = requisicaoAtualizacaoLivroDTO.Autor;
-            livroDomain.AnoPublicacao = requisicaoAtualizacaoLivroDTO.AnoPublicacao;
-            livroDomain.Editora = requisicaoAtualizacaoLivroDTO.Editora;
-            livroDomain.Genero = requisicaoAtualizacaoLivroDTO.Genero;
-            livroDomain.Preco = requisicaoAtualizacaoLivroDTO.Preco;
-            livroDomain.Prioridade = requisicaoAtualizacaoLivroDTO.Prioridade;
-            livroDomain.DataAdicao = requisicaoAtualizacaoLivroDTO.DataAdicao;
 
             await _dbContext.SaveChangesAsync();
 
@@ -157,15 +164,12 @@ namespace BookWishlistAPI.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> DeletarLivroAsync([FromRoute] int id)
         {
-            var livroDomain = await _dbContext.Livros.FirstOrDefaultAsync(livro => livro.Id == id);
+            var livroDomain = await _livroRepository.DeletarLivroAsync(id);
 
             if(livroDomain == null)
             {
                 return NotFound();
             }
-
-            _dbContext.Livros.Remove(livroDomain);
-            await _dbContext.SaveChangesAsync();
 
             var livroDto = new LivroDTO
             {

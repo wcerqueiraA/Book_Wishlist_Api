@@ -1,4 +1,5 @@
 using BookWishlistAPI.Data;
+using BookWishlistAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BookWishlistDbContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("BookWishlistConnectionString")));
+
+builder.Services.AddScoped<ILivroRepository, SQLLivroRepository>();
 
 var app = builder.Build();
 
