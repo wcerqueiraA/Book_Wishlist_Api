@@ -3,6 +3,7 @@ using BookWishlistAPI.Models.Domain;
 using BookWishlistAPI.Models.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookWishlistAPI.Controllers
 {
@@ -20,9 +21,9 @@ namespace BookWishlistAPI.Controllers
         // Listar todos os Livros
         // GET: https://localhost:portnumber/api/livros
         [HttpGet]
-        public IActionResult ListarLivros()
+        public async Task<IActionResult> ListarLivrosAsync()
         {
-            var livrosDomain = _dbContext.Livros.ToList();
+            var livrosDomain = await _dbContext.Livros.ToListAsync();
 
             var livrosDto = new List<LivroDTO>();
             foreach (var livroDomain in livrosDomain)
@@ -48,9 +49,9 @@ namespace BookWishlistAPI.Controllers
         // GET: https://localhost:portnumber/api/livros/{id}
         [HttpGet]
         [Route("{id:int}")]
-        public IActionResult BuscarLivroPorId([FromRoute] int id)
+        public async Task<IActionResult> BuscarLivroPorIdAsync([FromRoute] int id)
         {
-            var livroDomain = _dbContext.Livros.FirstOrDefault(livro => livro.Id == id);
+            var livroDomain = await _dbContext.Livros.FirstOrDefaultAsync(livro => livro.Id == id);
 
             if (livroDomain == null)
             {
@@ -76,7 +77,7 @@ namespace BookWishlistAPI.Controllers
         // Criar livro
         // POST: https://localhost:portnumber/api/livros
         [HttpPost]
-        public IActionResult CriarLivro([FromBody] RequisicaoCriacaoLivroDTO requisicaoCriacaoLivroDto)
+        public async Task<IActionResult> CriarLivroAsync([FromBody] RequisicaoCriacaoLivroDTO requisicaoCriacaoLivroDto)
         {
             var livroDomain = new Livro
             {
@@ -90,8 +91,8 @@ namespace BookWishlistAPI.Controllers
                 DataAdicao = requisicaoCriacaoLivroDto.DataAdicao
             };
 
-            _dbContext.Livros.Add(livroDomain);
-            _dbContext.SaveChanges();
+            await _dbContext.Livros.AddAsync(livroDomain);
+            await _dbContext.SaveChangesAsync();
 
             var livroDto = new LivroDTO
             {
@@ -106,16 +107,16 @@ namespace BookWishlistAPI.Controllers
                 DataAdicao = livroDomain.DataAdicao
             };
 
-            return CreatedAtAction(nameof(BuscarLivroPorId), new { id = livroDto.Id }, livroDto);
+            return CreatedAtAction(nameof(BuscarLivroPorIdAsync), new { id = livroDto.Id }, livroDto);
         }
 
         // Atualizar livro
         // PUT: https://localhost:portnumber/api/livros/{id}
         [HttpPut]
         [Route("{id:int}")]
-        public IActionResult Atualizacao([FromRoute] int id, [FromBody] RequisicaoAtualizacaoLivroDTO requisicaoAtualizacaoLivroDTO)
+        public async Task<IActionResult> AtualizarLivroAsync([FromRoute] int id, [FromBody] RequisicaoAtualizacaoLivroDTO requisicaoAtualizacaoLivroDTO)
         {
-            var livroDomain = _dbContext.Livros.FirstOrDefault(livro => livro.Id == id);
+            var livroDomain = await _dbContext.Livros.FirstOrDefaultAsync(livro => livro.Id == id);
 
             if(livroDomain == null)
             {
@@ -131,7 +132,7 @@ namespace BookWishlistAPI.Controllers
             livroDomain.Prioridade = requisicaoAtualizacaoLivroDTO.Prioridade;
             livroDomain.DataAdicao = requisicaoAtualizacaoLivroDTO.DataAdicao;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             var livroDto = new LivroDTO
             {
@@ -154,9 +155,9 @@ namespace BookWishlistAPI.Controllers
         // DELETE: https://https://localhost:portnumber/api/livros/{id}
         [HttpDelete]
         [Route("{id:int}")]
-        public IActionResult Deletar([FromRoute] int id)
+        public async Task<IActionResult> DeletarLivroAsync([FromRoute] int id)
         {
-            var livroDomain = _dbContext.Livros.FirstOrDefault(livro => livro.Id == id);
+            var livroDomain = await _dbContext.Livros.FirstOrDefaultAsync(livro => livro.Id == id);
 
             if(livroDomain == null)
             {
@@ -164,7 +165,7 @@ namespace BookWishlistAPI.Controllers
             }
 
             _dbContext.Livros.Remove(livroDomain);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             var livroDto = new LivroDTO
             {
