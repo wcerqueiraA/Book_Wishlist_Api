@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookWishlistAPI.CustomActionFilters;
 using BookWishlistAPI.Models.Domain;
 using BookWishlistAPI.Models.DTO;
 using BookWishlistAPI.Repositories;
@@ -49,6 +50,7 @@ namespace BookWishlistAPI.Controllers
         // Criar livro
         // POST: https://localhost:portnumber/api/livros
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> CriarLivroAsync([FromBody] RequisicaoCriacaoLivroDTO requisicaoCriacaoLivroDto)
         {
             var livroDomain = _mapper.Map<Livro>(requisicaoCriacaoLivroDto);
@@ -64,6 +66,7 @@ namespace BookWishlistAPI.Controllers
         // PUT: https://localhost:portnumber/api/livros/{id}
         [HttpPut]
         [Route("{id:int}")]
+        [ValidateModel]
         public async Task<IActionResult> AtualizarLivroAsync([FromRoute] int id, [FromBody] RequisicaoAtualizacaoLivroDTO requisicaoAtualizacaoLivroDTO)
         {
 

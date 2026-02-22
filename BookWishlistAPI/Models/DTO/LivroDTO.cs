@@ -1,4 +1,6 @@
-﻿namespace BookWishlistAPI.Models.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookWishlistAPI.Models.DTO
 {
     public class LivroDTO
     {
