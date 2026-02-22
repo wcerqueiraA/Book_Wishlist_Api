@@ -6,8 +6,8 @@ namespace BookWishlistAPI.Repositories
     {
         Task<List<Livro>> ListarLivrosAsync();
         Task<Livro?> BuscarLivroPorIdAsync(int id);
-        Task CriarLivroAsync();
-        Task AtualizarLivroAsync();
-        Task DeletarLivroAsync();
+        Task<Livro> CriarLivroAsync(Livro livro);
+        Task<Livro?> AtualizarLivroAsync(int id, Livro livro);
+        Task<Livro?> DeletarLivroAsync(int id);
     }
 }

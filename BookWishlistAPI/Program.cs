@@ -1,4 +1,5 @@
 using BookWishlistAPI.Data;
+using BookWishlistAPI.Mappings;
 using BookWishlistAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<BookWishlistDbContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("BookWishlistConnectionString")));
 
 builder.Services.AddScoped<ILivroRepository, SQLLivroRepository>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 

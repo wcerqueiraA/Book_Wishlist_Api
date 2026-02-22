@@ -1,10 +1,8 @@
-﻿using BookWishlistAPI.Data;
+﻿using AutoMapper;
 using BookWishlistAPI.Models.Domain;
 using BookWishlistAPI.Models.DTO;
 using BookWishlistAPI.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookWishlistAPI.Controllers
 {
@@ -12,14 +10,14 @@ namespace BookWishlistAPI.Controllers
     [ApiController]
     public class LivrosController : ControllerBase
     {
-        private readonly BookWishlistDbContext _dbContext;
 
         private readonly ILivroRepository _livroRepository;
+        private readonly IMapper _mapper;
 
-        public LivrosController(BookWishlistDbContext dbContext, ILivroRepository livroRepository)
+        public LivrosController(ILivroRepository livroRepository, IMapper mapper)
         {
-            _dbContext = dbContext;
             _livroRepository = livroRepository;
+            _mapper = mapper;
         }
 
         // Listar todos os Livros
@@ -29,24 +27,7 @@ namespace BookWishlistAPI.Controllers
         {
             var livrosDomain = await _livroRepository.ListarLivrosAsync();
 
-            var livrosDto = new List<LivroDTO>();
-            foreach (var livroDomain in livrosDomain)
-            {
-                livrosDto.Add(new LivroDTO()
-                {
-                    Id = livroDomain.Id,
-                    Titulo = livroDomain.Titulo,
-                    Autor = livroDomain.Autor,
-                    AnoPublicacao = livroDomain.AnoPublicacao,
-                    Editora = livroDomain.Editora,
-                    Genero = livroDomain.Genero,
-                    Preco = livroDomain.Preco,
-                    Prioridade = livroDomain.Prioridade,
-                    DataAdicao = livroDomain.DataAdicao
-                });
-            }
-
-            return Ok(livrosDto);
+            return Ok(_mapper.Map<List<LivroDTO>>(livrosDomain));
         }
 
         // Buscar livro por Id
@@ -62,20 +43,7 @@ namespace BookWishlistAPI.Controllers
                 return NotFound();
             }
 
-            var livroDto = new LivroDTO
-            {
-                Id = livroDomain.Id,
-                Titulo = livroDomain.Titulo,
-                Autor = livroDomain.Autor,
-                AnoPublicacao = livroDomain.AnoPublicacao,
-                Editora = livroDomain.Editora,
-                Genero = livroDomain.Genero,
-                Preco = livroDomain.Preco,
-                Prioridade = livroDomain.Prioridade,
-                DataAdicao = livroDomain.DataAdicao
-            };
-
-            return Ok(livroDto);
+            return Ok(_mapper.Map<LivroDTO>(livroDomain));
         }
 
         // Criar livro
@@ -83,32 +51,11 @@ namespace BookWishlistAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CriarLivroAsync([FromBody] RequisicaoCriacaoLivroDTO requisicaoCriacaoLivroDto)
         {
-            var livroDomain = new Livro
-            {
-                Titulo = requisicaoCriacaoLivroDto.Titulo,
-                Autor = requisicaoCriacaoLivroDto.Autor,
-                AnoPublicacao = requisicaoCriacaoLivroDto.AnoPublicacao,
-                Editora = requisicaoCriacaoLivroDto.Editora,
-                Genero = requisicaoCriacaoLivroDto.Genero,
-                Preco = requisicaoCriacaoLivroDto.Preco,
-                Prioridade = requisicaoCriacaoLivroDto.Prioridade,
-                DataAdicao = requisicaoCriacaoLivroDto.DataAdicao
-            };
+            var livroDomain = _mapper.Map<Livro>(requisicaoCriacaoLivroDto);
 
             livroDomain = await _livroRepository.CriarLivroAsync(livroDomain);
 
-            var livroDto = new LivroDTO
-            {
-                Id = livroDomain.Id,
-                Titulo = livroDomain.Titulo,
-                Autor = livroDomain.Autor,
-                AnoPublicacao = livroDomain.AnoPublicacao,
-                Editora = livroDomain.Editora,
-                Genero = livroDomain.Genero,
-                Preco = livroDomain.Preco,
-                Prioridade = livroDomain.Prioridade,
-                DataAdicao = livroDomain.DataAdicao
-            };
+            var livroDto = _mapper.Map<LivroDTO>(livroDomain);
 
             return CreatedAtAction(nameof(BuscarLivroPorIdAsync), new { id = livroDto.Id }, livroDto);
         }
@@ -120,17 +67,7 @@ namespace BookWishlistAPI.Controllers
         public async Task<IActionResult> AtualizarLivroAsync([FromRoute] int id, [FromBody] RequisicaoAtualizacaoLivroDTO requisicaoAtualizacaoLivroDTO)
         {
 
-            var livroDomain = new Livro
-            {
-                Titulo = requisicaoAtualizacaoLivroDTO.Titulo,
-                Autor = requisicaoAtualizacaoLivroDTO.Autor,
-                AnoPublicacao = requisicaoAtualizacaoLivroDTO.AnoPublicacao,
-                Editora = requisicaoAtualizacaoLivroDTO.Editora,
-                Genero = requisicaoAtualizacaoLivroDTO.Genero,
-                Preco = requisicaoAtualizacaoLivroDTO.Preco,
-                Prioridade = requisicaoAtualizacaoLivroDTO.Prioridade,
-                DataAdicao = requisicaoAtualizacaoLivroDTO.DataAdicao
-            };
+            var livroDomain = _mapper.Map<Livro>(requisicaoAtualizacaoLivroDTO);
 
             livroDomain =  await _livroRepository.AtualizarLivroAsync(id, livroDomain);
 
@@ -139,20 +76,7 @@ namespace BookWishlistAPI.Controllers
                 return NotFound();
             }
 
-            await _dbContext.SaveChangesAsync();
-
-            var livroDto = new LivroDTO
-            {
-                Id = livroDomain.Id,
-                Titulo = livroDomain.Titulo,
-                Autor = livroDomain.Autor,
-                AnoPublicacao = livroDomain.AnoPublicacao,
-                Editora = livroDomain.Editora,
-                Genero = livroDomain.Genero,
-                Preco = livroDomain.Preco,
-                Prioridade = livroDomain.Prioridade,
-                DataAdicao = livroDomain.DataAdicao
-            };
+            var livroDto = _mapper.Map<LivroDTO>(livroDomain);
 
             return Ok(livroDto);
 
@@ -171,18 +95,7 @@ namespace BookWishlistAPI.Controllers
                 return NotFound();
             }
 
-            var livroDto = new LivroDTO
-            {
-                Id = livroDomain.Id,
-                Titulo = livroDomain.Titulo,
-                Autor = livroDomain.Autor,
-                AnoPublicacao = livroDomain.AnoPublicacao,
-                Editora = livroDomain.Editora,
-                Genero = livroDomain.Genero,
-                Preco = livroDomain.Preco,
-                Prioridade = livroDomain.Prioridade,
-                DataAdicao = livroDomain.DataAdicao
-            };
+            var livroDto = _mapper.Map<LivroDTO>(livroDomain);
 
             return Ok(livroDto);
         }
