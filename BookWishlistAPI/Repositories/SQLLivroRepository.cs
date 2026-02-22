@@ -1,6 +1,5 @@
 ﻿using BookWishlistAPI.Data;
 using BookWishlistAPI.Models.Domain;
-using BookWishlistAPI.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookWishlistAPI.Repositories
