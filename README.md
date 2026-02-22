@@ -58,8 +58,8 @@ O projeto segue uma arquitetura em camadas (Layered Architecture), separando res
 A aplicação utiliza SQLite com Entity Framework Core.
 O schema é gerenciado através de Migrations.
 
-```md
-## Observações
 
+## Observações
+```md
 Este projeto foca na modelagem da API, separação de responsabilidades 
 e boas práticas de arquitetura. Autenticação não foi incluída intencionalmente.
