@@ -24,6 +24,21 @@ O projeto utiliza Entity Framework Core com SQLite para persistência de dados.
 - Persistência com SQLite
 - Testes unitários
 
+## Como Executar
+
+```bash
+dotnet restore
+dotnet ef database update
+dotnet run
+
+## Endpoints
+
+GET /books  
+GET /books/{id}  
+POST /books  
+PUT /books/{id}  
+DELETE /books/{id}
+
 ## Arquitetura
 
 O projeto segue uma arquitetura em camadas (Layered Architecture), separando responsabilidades:
@@ -37,3 +52,13 @@ O projeto segue uma arquitetura em camadas (Layered Architecture), separando res
 - **CustomActionFilters** → Regras transversais (validação, etc.)
 - **Migrations** → Versionamento do banco
 
+## Banco de Dados
+
+A aplicação utiliza SQLite com Entity Framework Core.
+O schema é gerenciado através de Migrations.
+
+
+## Observações
+
+Este projeto foca na modelagem da API, separação de responsabilidades 
+e boas práticas de arquitetura. Autenticação não foi incluída intencionalmente.
