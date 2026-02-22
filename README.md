@@ -6,6 +6,13 @@ seguindo boas práticas como Repository Pattern, DTO Pattern e AutoMapper.
 
 O projeto utiliza Entity Framework Core com SQLite para persistência de dados.
 
+## Documentação da API
+Swagger UI:
+
+![Swagger UI](swagger.png)
+
+Disponivel localmente após executar a aplicação.
+
 ## Stack Tecnológica
 
 - ASP.NET Core
