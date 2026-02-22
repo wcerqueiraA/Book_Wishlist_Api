@@ -30,6 +30,7 @@ O projeto utiliza Entity Framework Core com SQLite para persistência de dados.
 dotnet restore
 dotnet ef database update
 dotnet run
+```
 
 ## Endpoints
 
@@ -57,7 +58,7 @@ O projeto segue uma arquitetura em camadas (Layered Architecture), separando res
 A aplicação utiliza SQLite com Entity Framework Core.
 O schema é gerenciado através de Migrations.
 
-
+```md
 ## Observações
 
 Este projeto foca na modelagem da API, separação de responsabilidades 
