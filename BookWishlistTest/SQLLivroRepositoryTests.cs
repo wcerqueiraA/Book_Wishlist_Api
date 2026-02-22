@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookWishlistTest
 {
+    [TestFixture]
     public class SQLLivroRepositoryTests
     {
         private BookWishlistDbContext _context;
