@@ -34,6 +34,8 @@ Disponivel localmente após executar a aplicação.
 ## Como Executar
 
 ```bash
+git clone https://github.com/wcerqueiraA/Book_Wishlist_Api.git
+cd Book_Wishlist_Api
 dotnet restore
 dotnet ef database update
 dotnet run
