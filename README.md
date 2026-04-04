@@ -14,7 +14,7 @@ Swagger UI:
 Disponivel localmente após executar a aplicação.
 
 ## Stack Tecnológica
-
+- C#
 - ASP.NET Core
 - Entity Framework Core
 - SQLite
